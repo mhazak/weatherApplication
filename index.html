@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+    <script src="index.js"></script>
+   
+   <style>
+      #tableOne {
+        display: none;
+        margin-top: 4px;
+      }
+      .buttons {
+        margin-top: 4px;
+        display: none;
+      }
+      .heatIndex {
+        margin-top: 4px;
+        display: none;
+      }
+      #myChart{
+          margin-top: 20px;
+          display:none;
+          background-color: white;
+          
+      }
+      #ch{
+          display:none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container-fluid">
+        <div class="p-3 mb-2 bg-success text-white">
+        <!-- HEADER -->
+      <h2 class="display-4">Click what would you like to display:</h2>
+      
+      <!-- NAVBAR -->
+      <nav class="navbar navbar-dark bg-dark">
+        <input
+          type="button"
+          class="btn btn-dark"
+          onclick="showOrHide('but')"
+          value="Data display" 
+        /> <!-- BUTTON TO SHOW DATA-->
+
+        <input type="button" class="btn btn-dark" value="Heat index" onclick="showOrHide('hi')" /> <!-- BUTTON TO SHOW HEAT INDEX-->
+        <input type="button" class="btn btn-dark" value="Chart" onclick="showOrHide('ch')"/> <!-- BUTTON TO SHOW CHART -->
+      </nav>
+
+      <!-- CHART -->
+      <div id="ch">
+      <canvas id="myChart" width="300" height="100"></canvas>
+    </div>
+
+
+      <!-- HEAT INDEX -->
+      <div class="heatIndex" id="hi">
+        <form>
+          <input type="number" placeholder="Temperature" id="tem" /> <!-- INPUTS FOR TEMPERATURE AND HUMIDITY-->
+          <input type="number" placeholder="Humidity" id="hm" />
+          <input type="radio" id="cel" name="form" value="Celsius" />
+          <label for="celsius">Celsius</label>
+          <input type="radio" id="far" name="form" value="Farrenheit" />
+          <label for="male">Fahrenheit</label><br>
+          <input type="button" class="btn btn-dark" value="Calculate!" onclick="heatCalc()"></input>
+        </form>
+
+        <p id="res"></p> <!-- RESULT MESSAGE -->
+        <p id="error"></p> <!-- ERROR MESSAGE -->
+      </div>
+
+
+      <!-- BUTTONS OF WHICH DAY TABLE TO SHOW-->
+      <div class="buttons" id="but">
+        <button type="button" class="btn btn-dark" onclick="twentySix()">
+          26/4
+        </button>
+        <button type="button" class="btn btn-dark" onclick="twentySeven()">
+          27/4
+        </button>
+        <button type="button" class="btn btn-dark" onclick="twentyEight()">
+          28/4
+        </button>
+        <button type="button" class="btn btn-dark" onclick="twentyNine()">
+          29/4
+        </button>
+        <button type="button" class="btn btn-dark" onclick="thirty()">
+          30/4
+        </button>
+
+
+      <!-- TABLE -->
+      <div id="tableOne">
+        <table class="table table-hover table-dark">
+          <thead>
+            <tr>
+              <th scope="col">Time</th>
+              <th scope="col">Temperature</th>
+              <th scope="col">Weather</th>
+              <th scope="col">Humadity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row" id="time1"></th>
+              <td id="temp1"></td>
+              <td id="wet1"></td>
+              <td id="hum1"></td>
+            </tr>
+            <tr>
+              <th scope="row" id="time2"></th>
+              <td id="temp2"></td>
+              <td id="wet2"></td>
+              <td id="hum2"></td>
+            </tr>
+            <tr>
+              <th scope="row" id="time3"></th>
+              <td id="temp3"></td>
+              <td id="wet3"></td>
+              <td id="hum3"></td>
+            </tr>
+            <tr>
+              <th scope="row" id="time4"></th>
+              <td id="temp4"></td>
+              <td id="wet4"></td>
+              <td id="hum4"></td>
+            </tr>
+            <tr>
+              <th scope="row" id="time5"></th>
+              <td id="temp5"></td>
+              <td id="wet5"></td>
+              <td id="hum5"></td>
+            </tr>
+            <tr>
+              <th scope="row" id="time6"></th>
+              <td id="temp6"></td>
+              <td id="wet6"></td>
+              <td id="hum6"></td>
+            </tr>
+
+            <tr>
+              <th scope="row" id="time7"></th>
+              <td id="temp7"></td>
+              <td id="wet7"></td>
+              <td id="hum7"></td>
+            </tr>
+            <tr>
+              <th scope="row" id="time8"></th>
+              <td id="temp8"></td>
+              <td id="wet8"></td>
+              <td id="hum8"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</div>
+ 
+ 
+ <script>
+        var ctx = document.getElementById("myChart").getContext("2d");
+        
+        //TEMPERATURES DURING FEW DAYS FOR CHART
+        fifthDay_temp = [8.7, 8.2, 7.0, 7.0, 7.9, 8.2, 8.8, 8.8];
+        fourthDay_temp = [8.5, 6.5, 4.6, 4.7, 4.7, 5.0, 5.2, 5.8];
+        thirdDay_temp = [9.6, 7.3, 6.7, 6.2, 6.2, 6.3, 6.3, 6.0];
+        secondDay_temp = [9.7, 8.5, 6.2, 6.3, 6.6, 6.5, 6.5, 6.1];
+        firstDay_temp = [9.8, 9.9, 8.8, 7.6, 7.6, 8.0, 8.0, 9.0];
+        
+        //TIME VALUES FOR CHART
+        const timer = [
+          "2:33",
+          "5:33",
+          "8:33",
+          "11:33",
+          "14:33",
+          "17:33",
+          "20:33",
+          "23:33"
+        ];
+        
+        //COLOR PALET FOR CHART LINES
+        var chartColors = {
+          red: "rgb(255, 99, 132)",
+          orange: "rgb(255, 159, 64)",
+          yellow: "rgb(255, 205, 86)",
+          green: "rgb(75, 192, 192)",
+          blue: "rgb(54, 162, 235)",
+          purple: "rgb(153, 102, 255)",
+          grey: "rgb(231,233,237)"
+        };
+        
+        //CHART
+        var myChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: timer,
+            datasets: [
+              
+            {
+                label: "26/4/2018",
+                borderColor: chartColors.red,
+                data: firstDay_temp,
+                borderWidth: 1,
+                fill: false
+              },
+        
+              {
+                label: "27/4/2018",
+                borderColor: chartColors.orange,
+                data: secondDay_temp,
+                borderWidth: 1,
+                fill: false
+              },
+        
+              {
+                label: "28/4/2018",
+                data: thirdDay_temp,
+                borderColor: chartColors.purple,
+                borderWidth: 1,
+                fill: false
+              },
+        
+              {
+                label: "29/4/2018",
+                data: fourthDay_temp,
+                borderColor: chartColors.blue,
+                borderWidth: 1,
+                fill: false
+              },
+        
+              {
+                label: "30/4/2018",
+                data: fifthDay_temp,
+                borderColor: chartColors.green,
+                borderWidth: 1,
+                fill: false
+              }
+            ]
+          },
+          options: {
+            scales: {
+              
+                xAxes: [
+                {
+                  display: true,
+                  gridLines: {
+                    display: false
+                  },
+        
+                  scaleLabel: {
+                    display: true,
+                    labelString: "Time"
+                  }
+                }
+              ],
+              
+              yAxes: [
+                {
+                  display: true,
+                  gridLines: {
+                    display: false
+                  },
+        
+                  scaleLabel: {
+                    display: true,
+                    labelString: "Temperature"
+                  }
+                }
+              ]
+            }
+          }
+        });
+    </script>
+  </body>
+</html>
+<!-- created by Marek Hazak -->
